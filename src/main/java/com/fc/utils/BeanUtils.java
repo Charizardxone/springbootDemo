@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.sf.cglib.beans.BeanCopier;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/10/24 17:03
  */
 public class BeanUtils {

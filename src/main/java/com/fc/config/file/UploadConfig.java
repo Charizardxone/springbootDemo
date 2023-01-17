@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2023/1/4 15:26
  */
 @Configuration

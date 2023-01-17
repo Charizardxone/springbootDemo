@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author yangfucheng <1263578411@qq.com>
+ * @author yfc <1263578411@qq.com>
  * @Description
  * @Since 1.8
  * @date 2022/8/24 18:00

@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/15 9:55
  */
 public class ListNode {

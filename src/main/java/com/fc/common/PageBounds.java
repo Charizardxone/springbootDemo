@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 分页查询条件对象
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/9 10:15
  */
 public class PageBounds extends RowBounds implements Serializable {

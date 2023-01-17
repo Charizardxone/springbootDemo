@@ -16,7 +16,7 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 /**
  * 事务配置
  *
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/9 9:26
  */
 @Configuration

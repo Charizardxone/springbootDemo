@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/6 15:13
  */
 public interface UserCustomizedMapper {

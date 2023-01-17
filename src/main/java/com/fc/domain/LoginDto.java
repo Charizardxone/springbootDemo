@@ -3,7 +3,7 @@ package com.fc.domain;
 import lombok.Data;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/12/6 10:45
  */
 @Data

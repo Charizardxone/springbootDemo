@@ -14,7 +14,7 @@ import java.util.Date;
 
 /**
  * myatis拦截器
- * @author yangfucheng
+ * @author yfc
  * @date 2022/12/1 10:10
  */
 @Component

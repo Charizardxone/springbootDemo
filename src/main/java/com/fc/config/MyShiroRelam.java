@@ -12,7 +12,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/10/18 14:51
  */
 public class MyShiroRelam extends AuthorizingRealm {

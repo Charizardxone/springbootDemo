@@ -14,21 +14,16 @@ import com.fc.utils.IdUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientProperties;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
-import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.awt.print.Book;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/6 15:11
  */
 @Service
@@ -64,14 +59,13 @@ public class UserServiceImpl implements UserService {
             count = sysUserEntityMapper.insertSelective(user);
 
             IndexOperations indexOperations = elasticsearchRestTemplate.indexOps(SysUserEntity.class);
-            //创建索引
-            boolean a = indexOperations.create();
-            if (a) {
-                //生成映射
-                Document document = indexOperations.createMapping();
-                //推送映射
-                indexOperations.putMapping(document);
+            if(!indexOperations.exists()){
+                indexOperations.create();
+            }else{
+                indexOperations.delete();
+                indexOperations.create();
             }
+            indexOperations.putMapping(indexOperations.createMapping(SysUserEntity.class));
         }else {
             count =  sysUserEntityMapper.updateByPrimaryKey(user);
         }

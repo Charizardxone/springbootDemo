@@ -14,7 +14,7 @@ import static com.fc.define.ResultCodeEnum.*;
 /**
  * 登录Controller
  *
- * @author yangfucheng
+ * @author yfc
  * @date 2022/10/18 11:29
  */
 @Slf4j

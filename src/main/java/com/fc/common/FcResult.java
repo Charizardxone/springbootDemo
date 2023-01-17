@@ -6,7 +6,7 @@ import static com.fc.define.ResultCodeEnum.*;
 
 /**
  * 返回结果对象
- * @author yangfucheng
+ * @author yfc
  */
 public class FcResult<T> implements Serializable {
 

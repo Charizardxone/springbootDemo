@@ -7,7 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.List;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2022/9/9 10:41
  */
 public interface EntityService {

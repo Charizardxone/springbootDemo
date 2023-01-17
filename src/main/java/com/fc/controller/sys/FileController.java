@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * @author yangfucheng
+ * @author yfc
  * @date 2023/1/4 15:20
  */
 @RestController
