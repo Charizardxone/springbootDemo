@@ -5,18 +5,26 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(indexName = "user")
 public class SysUserEntity implements Serializable {
     /** ID */
+    @Id
     private String id;
 
     /** 用户名 */
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String username;
 
     /** 密码 */
+    @Field(type = FieldType.Text)
     private String password;
 
     /** 电话号码 */

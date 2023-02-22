@@ -60,6 +60,7 @@ public class FcResult<T> implements Serializable {
         return new FcResult(CODE_ERROR.getCode(), msg, null);
     }
 
+
     /**
      * @return the code
      */

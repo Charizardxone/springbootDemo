@@ -1,9 +1,16 @@
 package com.fc.domain;
 
+import cn.hutool.core.lang.hash.Number128;
 import org.apache.commons.collections.map.HashedMap;
 
+import java.io.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 /**
@@ -54,7 +61,6 @@ public class ListNode {
         }
 
         return node;
-
     }
 
 
@@ -381,13 +387,13 @@ public class ListNode {
         StringBuilder res = new StringBuilder();
         char[] chars = str.toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            res.append(getRoman(Integer.valueOf(String.valueOf(chars[i])), chars.length-i));
+            res.append(getRoman(Integer.valueOf(String.valueOf(chars[i])), chars.length - i));
         }
         return res.toString();
     }
 
-    public static String getRoman(Integer num, int index){
-        Map<Integer, String[]> map = new HashMap<Integer, String[]>(){{
+    public static String getRoman(Integer num, int index) {
+        Map<Integer, String[]> map = new HashMap<Integer, String[]>() {{
             put(1, new String[]{"I", "V", "X"});
             put(2, new String[]{"X", "L", "C"});
             put(3, new String[]{"C", "D", "M"});
@@ -395,15 +401,15 @@ public class ListNode {
         }};
         String res = "";
         String[] strings = map.get(index);
-        if(num < 4){
+        if (num < 4) {
             for (Integer i = 0; i < num; i++) {
                 res += strings[0];
             }
-        }else if(num == 4){
+        } else if (num == 4) {
             res += strings[0] + strings[1];
-        }else if (num == 9){
+        } else if (num == 9) {
             res += strings[0] + strings[2];
-        }else{
+        } else {
             res += strings[1];
             for (int i = 0; i < (num - 5); i++) {
                 res += strings[0];
@@ -479,13 +485,13 @@ public class ListNode {
         return getCombinations(new HashMap<>(), digits);
     }
 
-    public static List<String> getCombinations(Map<String, List<String>> map, String digits){
-        if(map.containsKey(digits)){
+    public static List<String> getCombinations(Map<String, List<String>> map, String digits) {
+        if (map.containsKey(digits)) {
             return map.get(digits);
         }
-        if(digits.length() > 1){
+        if (digits.length() > 1) {
             String sub = digits.substring(0, digits.length() - 1);
-            if(map.containsKey(sub)){
+            if (map.containsKey(sub)) {
                 List<String> list = map.get(sub);
                 List<String> lastDigitList = getLetter(digits.substring(digits.length() - 1));
 
@@ -497,7 +503,7 @@ public class ListNode {
                 }
                 map.put(digits, list_new);
                 return list_new;
-            }else{
+            } else {
                 getCombinations(map, sub);
                 return getCombinations(map, digits);
             }
@@ -507,29 +513,62 @@ public class ListNode {
         return list;
     }
 
-    public static List<String> getLetter(String digit){
+    public static List<String> getLetter(String digit) {
         List<String> list = new ArrayList<>();
-        switch (digit){
-            case "2": list.add("a");list.add("b");list.add("c");break;
-            case "3": list.add("d");list.add("e");list.add("f");break;
-            case "4": list.add("g");list.add("h");list.add("i");break;
-            case "5": list.add("j");list.add("k");list.add("l");break;
+        switch (digit) {
+            case "2":
+                list.add("a");
+                list.add("b");
+                list.add("c");
+                break;
+            case "3":
+                list.add("d");
+                list.add("e");
+                list.add("f");
+                break;
+            case "4":
+                list.add("g");
+                list.add("h");
+                list.add("i");
+                break;
+            case "5":
+                list.add("j");
+                list.add("k");
+                list.add("l");
+                break;
 
-            case "6": list.add("m");list.add("n");list.add("o");break;
-            case "7": list.add("p");list.add("q");list.add("r");list.add("s");break;
-            case "8": list.add("t");list.add("u");list.add("v");break;
-            case "9": list.add("w");list.add("x");list.add("y");list.add("z");break;
+            case "6":
+                list.add("m");
+                list.add("n");
+                list.add("o");
+                break;
+            case "7":
+                list.add("p");
+                list.add("q");
+                list.add("r");
+                list.add("s");
+                break;
+            case "8":
+                list.add("t");
+                list.add("u");
+                list.add("v");
+                break;
+            case "9":
+                list.add("w");
+                list.add("x");
+                list.add("y");
+                list.add("z");
+                break;
         }
         return list;
     }
-
 
 
     public static List<List<Integer>> fourSum(int[] nums, int target) {
 
         List<List<Integer>> res = new ArrayList<>();
         Set<String> stringSet = new HashSet<>();
-        if(nums.length < 4) return res;
+        if (nums.length < 4) return res;
 
 
         int[] ints = Arrays.stream(nums).sorted().toArray();
@@ -538,24 +577,24 @@ public class ListNode {
         int i = 0;
         int j = ints.length - 1;
 
-        while(i < j){
+        while (i < j) {
             int left = ints[i];
             int right = ints[j];
             int sum = left + right;
 
             int target1 = target - sum;
             long t = Long.valueOf(target) - Long.valueOf(sum);
-            if(t == Long.valueOf(target1)){
-                int[] ints1 = new int[ints.length-2];
+            if (t == Long.valueOf(target1)) {
+                int[] ints1 = new int[ints.length - 2];
                 int i1 = 0;
                 for (int k = 0; k < ints.length; k++) {
-                    if(k != i && k != j){
+                    if (k != i && k != j) {
                         ints1[i1] = ints[k];
                         i1++;
                     }
                 }
                 List<List<Integer>> lists = twoSum(ints1, target1);
-                if(lists.size() > 0){
+                if (lists.size() > 0) {
                     for (List<Integer> list : lists) {
                         List<Integer> l = new ArrayList<>();
                         l.addAll(list);
@@ -577,7 +616,7 @@ public class ListNode {
                 }
             }
             j--;
-            if(i == j){
+            if (i == j) {
                 i++;
                 j = ints.length - 1;
             }
@@ -595,10 +634,10 @@ public class ListNode {
         return res;
     }
 
-    public static List<List<Integer>> twoSum(int[] nums, int target){
+    public static List<List<Integer>> twoSum(int[] nums, int target) {
 
         List<List<Integer>> res = new ArrayList<>();
-        if(nums.length < 2) return res;
+        if (nums.length < 2) return res;
 
         int[] ints = Arrays.stream(nums).sorted().toArray();
         // -2, -1, 0, 0, 1, 2
@@ -606,23 +645,23 @@ public class ListNode {
         int i = 0;
         int j = ints.length - 1;
 
-        while(i < j){
+        while (i < j) {
             int left = ints[i];
             int right = ints[j];
             int sum = left + right;
 
-            if(sum == target){
-                res.add(new ArrayList<Integer>(){{
+            if (sum == target) {
+                res.add(new ArrayList<Integer>() {{
                     add(left);
                     add(right);
                 }});
                 i++;
                 j = ints.length - 1;
             }
-            if(sum < target){
+            if (sum < target) {
                 i++;
             }
-            if(sum > target){
+            if (sum > target) {
                 j--;
             }
         }
@@ -635,16 +674,16 @@ public class ListNode {
         int res = 0;
         int i = 0;
         int j = height.length - 1;
-        while (i < j){
+        while (i < j) {
             int h1 = height[i];
             int h2 = height[j];
             int area = Math.min(h1, h2) * (j - i);
-            if(area > res) {
+            if (area > res) {
                 res = area;
             }
-            if(h1 < h2){
+            if (h1 < h2) {
                 i++;
-            }else{
+            } else {
                 j--;
             }
         }
@@ -656,15 +695,15 @@ public class ListNode {
     }
 
     public static ListNode removeNthFromEnd(ListNode head, int n) {
-        if(head == null) return null;
+        if (head == null) return null;
         List<Integer> list = new ArrayList<>();
-        while(head != null){
+        while (head != null) {
             list.add(head.val);
             head = head.next;
         }
 
         list.remove(list.size() - n);
-        if(list.size() == 0) return null;
+        if (list.size() == 0) return null;
 
         ListNode node = new ListNode(list.get(0));
         ListNode temp = node;
@@ -676,21 +715,129 @@ public class ListNode {
         return node;
     }
 
+    // 迭代写法
+    static int add(int num1, int num2) {
+        if (num2 == 0) return num1;
+        return add(num1 ^ num2, (num1 & num2) << 1);
+    }
 
-    public static void main(String[] args) {
+    static int substract(int num1, int num2) {
+        int subtractor = add(~num2, 1);
+        int result = add(num1, subtractor);
+        return result;
+    }
+
+    static int mutiply(int num1, int num2) {
+        int sum = 0;
+        int num = add(~num2, 1);
+        for (int i = 0; i < num; i++) {
+            sum = add(sum, num1);
+        }
+        if((num1 ^ num2) < 0){
+            sum = add(~sum , 1);
+        }
+        return sum;
+    }
+
+    public static int divide(int dividend, int divisor) {
+
+        int a = dividend >= 0?dividend : add(~dividend, 1);
+        int b = divisor >= 0?divisor : add(~divisor, 1);
+
+        int res = 0;
+        while (a >= b){
+            a = substract(a, b);
+            res = add(res, 1);
+        }
+        if((dividend ^ divisor) < 0){
+            res = add(~res , 1);
+        }
+
+        return res;
+    }
+
+//    输入: candidates = [2,3,5], target = 8
+//    输出: [[2,2,2,2],[2,3,3],[3,5]]
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        Set<String> set = new HashSet<>();
+        int i = 0, sum = 0;
 
 
-        ListNode node1 = new ListNode(1);
-        ListNode node2 = new ListNode(2);
-        ListNode node3 = new ListNode(3);
-        ListNode node4 = new ListNode(4);
-        ListNode node5 = new ListNode(5);
-        node1.next = node2;
-        node2.next = node3;
-        node3.next = node4;
-        node4.next = node5;
+        return null;
+    }
 
-        removeNthFromEnd(node1, 2);
+    public static boolean sum(int[] arr, int target){
+        int sum = Arrays.stream(arr).sum();
+        if(sum == target){
+            return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        BlockingQueue<String> queue = new ArrayBlockingQueue<>(2, true);
+        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+
+        poolExecutor.execute(() -> {
+            try {
+                while(true){
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    queue.put(format.format(new Date()));
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        poolExecutor.execute(() -> {
+            while(true){
+                try {
+                    System.out.println(queue.take());
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+//        new Thread(() -> {
+//            try {
+//                while(true){
+//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                    queue.put(format.format(new Date()));
+//                    Thread.sleep(1000);
+//                }
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }).start();
+//
+//        new Thread(() -> {
+//            while(true){
+//                try {
+//                    System.out.println(queue.take());
+////                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }).start();
+
+
+//        ListNode node1 = new ListNode(1);
+//        ListNode node2 = new ListNode(2);
+//        ListNode node3 = new ListNode(3);
+//        ListNode node4 = new ListNode(4);
+//        ListNode node5 = new ListNode(5);
+//        node1.next = node2;
+//        node2.next = node3;
+//        node3.next = node4;
+//        node4.next = node5;
+
+//        removeNthFromEnd(node1, 2);
 
 //        System.out.println(maxArea(new int[]{1,1}));
 

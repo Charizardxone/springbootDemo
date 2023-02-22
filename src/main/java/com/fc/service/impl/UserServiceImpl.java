@@ -2,25 +2,43 @@ package com.fc.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.fc.annotation.RabbitAspect;
 import com.fc.common.EntityService;
 import com.fc.common.FcResult;
 import com.fc.common.PageBounds;
+import com.fc.config.RabbitConfig;
 import com.fc.dao.SysUserEntityMapper;
 import com.fc.dao.customized.UserCustomizedMapper;
 import com.fc.domain.SysUserEntity;
 import com.fc.domain.SysUserEntityExample;
+import com.fc.domain.vo.ElasticsearchUserDao;
 import com.fc.service.UserService;
 import com.fc.utils.IdUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.CollectionUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
+import org.springframework.data.elasticsearch.core.RuntimeField;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.*;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author yfc
@@ -41,6 +59,12 @@ public class UserServiceImpl implements UserService {
     @Resource
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
+    @Resource
+    private ElasticsearchUserDao elasticsearchUserDao;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+
     @Override
     public SysUserEntity getById(String id) {
         SysUserEntity user1 = new SysUserEntity();
@@ -52,24 +76,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @RabbitAspect
     public FcResult<SysUserEntity> saveUser(SysUserEntity user) {
         int count = 0;
         if(user.getId() == null){
             user.setId(IdUtils.getUlid());
             count = sysUserEntityMapper.insertSelective(user);
+//            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, "demo.haha", JSONObject.toJSONString(user));
 
-            IndexOperations indexOperations = elasticsearchRestTemplate.indexOps(SysUserEntity.class);
-            if(!indexOperations.exists()){
-                indexOperations.create();
-            }else{
-                indexOperations.delete();
-                indexOperations.create();
-            }
-            indexOperations.putMapping(indexOperations.createMapping(SysUserEntity.class));
         }else {
             count =  sysUserEntityMapper.updateByPrimaryKey(user);
         }
-
         return count == 1?FcResult.success("", user): FcResult.fail("保存用户失败！");
     }
 
@@ -77,10 +94,33 @@ public class UserServiceImpl implements UserService {
     public Object page(Map<String, Object> params, PageBounds pageBounds) throws Exception {
         SysUserEntityExample example = new SysUserEntityExample();
 
+        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME1, "demo1.haha", "helloWorld11!!");
 
         PageHelper.startPage((Integer) params.get("page"), (Integer) params.get("limit"));
         Page<SysUserEntity> list = userCustomizedMapper.findList(params);
         PageInfo pageInfo2 = new PageInfo(list);
+
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("username", "ww"))
+                .build();
+
+        SearchHits<SysUserEntity> search = elasticsearchRestTemplate.search(nativeSearchQuery, SysUserEntity.class);
+        List<SysUserEntity> collect = search.getSearchHits().stream().map(hit -> {
+            SysUserEntity user = hit.getContent();
+            // 获取文章标题高亮数据
+            List<String> titleHighLightList = hit.getHighlightFields().get("username");
+            if (CollectionUtils.isNotEmpty(titleHighLightList)) {
+                // 替换标题数据
+                user.setUsername(titleHighLightList.get(0));
+            }
+            // 获取文章内容高亮数据
+            List<String> contentHighLightList = hit.getHighlightFields().get("password");
+            if (CollectionUtils.isNotEmpty(contentHighLightList)) {
+                // 替换内容数据
+                user.setPassword(contentHighLightList.get(contentHighLightList.size() - 1));
+            }
+            return user;
+        }).collect(Collectors.toList());
 
         return FcResult.success("", pageInfo2);
     }

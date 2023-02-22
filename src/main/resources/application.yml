@@ -21,6 +21,20 @@ spring:
       max-wait: 6000
       filter: slf4j
 
+  rabbitmq:
+    addresses: 121.43.181.100
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+  boot:
+    admin:
+      client:
+        url: http://127.0.0.1:9099
+        instance:
+          serviceHostType: IP
+
 
 logging:
   level:
@@ -29,6 +43,24 @@ logging:
 
 upload:
   uploadPath: D:\dev\files
+
+
+
+
+
+
+# management 是所有actuator的配置
+# management.endpoint.端点名.xxxx  对某个端点的具体配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    enabled-by-default: true  #默认开启所有监控端点  true
+    health:
+      show-details: ALWAYS
+
 
 
 
