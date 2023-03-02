@@ -1,17 +1,12 @@
 package com.fc.domain;
 
-import cn.hutool.core.lang.hash.Number128;
-import org.apache.commons.collections.map.HashedMap;
 
-import java.io.*;
+import co.elastic.clients.elasticsearch.watcher.ExecutionThreadPool;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
+import java.util.concurrent.*;
 
 /**
  * @author yfc
@@ -733,30 +728,30 @@ public class ListNode {
         for (int i = 0; i < num; i++) {
             sum = add(sum, num1);
         }
-        if((num1 ^ num2) < 0){
-            sum = add(~sum , 1);
+        if ((num1 ^ num2) < 0) {
+            sum = add(~sum, 1);
         }
         return sum;
     }
 
     public static int divide(int dividend, int divisor) {
 
-        int a = dividend >= 0?dividend : add(~dividend, 1);
-        int b = divisor >= 0?divisor : add(~divisor, 1);
+        int a = dividend >= 0 ? dividend : add(~dividend, 1);
+        int b = divisor >= 0 ? divisor : add(~divisor, 1);
 
         int res = 0;
-        while (a >= b){
+        while (a >= b) {
             a = substract(a, b);
             res = add(res, 1);
         }
-        if((dividend ^ divisor) < 0){
-            res = add(~res , 1);
+        if ((dividend ^ divisor) < 0) {
+            res = add(~res, 1);
         }
 
         return res;
     }
 
-//    输入: candidates = [2,3,5], target = 8
+    //    输入: candidates = [2,3,5], target = 8
 //    输出: [[2,2,2,2],[2,3,3],[3,5]]
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
         Arrays.sort(candidates);
@@ -767,41 +762,81 @@ public class ListNode {
         return null;
     }
 
-    public static boolean sum(int[] arr, int target){
+    public static boolean sum(int[] arr, int target) {
         int sum = Arrays.stream(arr).sum();
-        if(sum == target){
+        if (sum == target) {
             return true;
         }
         return false;
     }
 
+    private synchronized static void testMethod() {
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    private static Object lock = new Object();
+
+    private static int i = 0;
+
     public static void main(String[] args) throws Exception {
 
         BlockingQueue<String> queue = new ArrayBlockingQueue<>(2, true);
-        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(5,
+                10, 10, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(10));
 
-        poolExecutor.execute(() -> {
-            try {
-                while(true){
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    queue.put(format.format(new Date()));
-                    Thread.sleep(1000);
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
 
-        poolExecutor.execute(() -> {
-            while(true){
-                try {
-                    System.out.println(queue.take());
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+        poolExecutor.execute(()->{
+            while ( i < 10 ){
+                if(i % 2 == 0){
+                    System.out.println("Thread A : " + i);
+                    i ++;
                 }
             }
         });
+
+        poolExecutor.execute(()->{
+            while ( i < 10 ){
+                if(i % 2 == 1){
+                    System.out.println("Thread B : " + i);
+                    i ++;
+                }
+            }
+        });
+
+
+//        poolExecutor.execute(() -> {
+//            synchronized (lock){
+//                for (int i = 0; i < 5; i++) {
+//                    System.out.println("Thread A " + i);
+//                    lock.notify();
+//                    try {
+//                        lock.wait();
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//                lock.notify();
+//            }
+//        });
+//
+//        poolExecutor.execute(() -> {
+//            synchronized (lock){
+//                for (int i = 0; i < 5; i++) {
+//                    System.out.println("Thread B " + i);
+//                    lock.notify();
+//                    try {
+//                        lock.wait();
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//                lock.notify();
+//            }
+//        });
 
 //        new Thread(() -> {
 //            try {

@@ -2,8 +2,6 @@ package com.fc.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.fc.annotation.RabbitAspect;
 import com.fc.common.EntityService;
 import com.fc.common.FcResult;
@@ -19,23 +17,15 @@ import com.fc.utils.IdUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.collections.CollectionUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.IndexOperations;
-import org.springframework.data.elasticsearch.core.RuntimeField;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.*;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -109,13 +99,13 @@ public class UserServiceImpl implements UserService {
             SysUserEntity user = hit.getContent();
             // 获取文章标题高亮数据
             List<String> titleHighLightList = hit.getHighlightFields().get("username");
-            if (CollectionUtils.isNotEmpty(titleHighLightList)) {
+            if (CollectionUtil.isNotEmpty(titleHighLightList)) {
                 // 替换标题数据
                 user.setUsername(titleHighLightList.get(0));
             }
             // 获取文章内容高亮数据
             List<String> contentHighLightList = hit.getHighlightFields().get("password");
-            if (CollectionUtils.isNotEmpty(contentHighLightList)) {
+            if (CollectionUtil.isNotEmpty(contentHighLightList)) {
                 // 替换内容数据
                 user.setPassword(contentHighLightList.get(contentHighLightList.size() - 1));
             }
