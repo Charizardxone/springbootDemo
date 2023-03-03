@@ -11,24 +11,17 @@ import com.fc.dao.SysUserEntityMapper;
 import com.fc.dao.customized.UserCustomizedMapper;
 import com.fc.domain.SysUserEntity;
 import com.fc.domain.SysUserEntityExample;
-import com.fc.domain.vo.ElasticsearchUserDao;
 import com.fc.service.UserService;
 import com.fc.utils.IdUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author yfc
@@ -46,11 +39,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private EntityService entityService;
 
-    @Resource
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
-
-    @Resource
-    private ElasticsearchUserDao elasticsearchUserDao;
+//    @Resource
+//    private ElasticsearchUserDao elasticsearchUserDao;
 
     @Resource
     private RabbitTemplate rabbitTemplate;
@@ -89,28 +79,6 @@ public class UserServiceImpl implements UserService {
         PageHelper.startPage((Integer) params.get("page"), (Integer) params.get("limit"));
         Page<SysUserEntity> list = userCustomizedMapper.findList(params);
         PageInfo pageInfo2 = new PageInfo(list);
-
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchQuery("username", "ww"))
-                .build();
-
-        SearchHits<SysUserEntity> search = elasticsearchRestTemplate.search(nativeSearchQuery, SysUserEntity.class);
-        List<SysUserEntity> collect = search.getSearchHits().stream().map(hit -> {
-            SysUserEntity user = hit.getContent();
-            // 获取文章标题高亮数据
-            List<String> titleHighLightList = hit.getHighlightFields().get("username");
-            if (CollectionUtil.isNotEmpty(titleHighLightList)) {
-                // 替换标题数据
-                user.setUsername(titleHighLightList.get(0));
-            }
-            // 获取文章内容高亮数据
-            List<String> contentHighLightList = hit.getHighlightFields().get("password");
-            if (CollectionUtil.isNotEmpty(contentHighLightList)) {
-                // 替换内容数据
-                user.setPassword(contentHighLightList.get(contentHighLightList.size() - 1));
-            }
-            return user;
-        }).collect(Collectors.toList());
 
         return FcResult.success("", pageInfo2);
     }

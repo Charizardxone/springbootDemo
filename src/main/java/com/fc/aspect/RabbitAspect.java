@@ -29,7 +29,6 @@ import static com.fc.define.ResultCodeEnum.CODE_SUCCESS;
 @Component
 public class RabbitAspect {
 
-
     @Resource
     private RabbitTemplate rabbitTemplate;
 

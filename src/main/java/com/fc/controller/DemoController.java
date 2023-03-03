@@ -1,5 +1,7 @@
 package com.fc.controller;
 
+import com.fc.common.FcResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2022/8/24 18:00
  */
 @RestController
-@RequestMapping("demo")
+@RequestMapping("hello")
 public class DemoController {
 
 //    @NacosValue("${config.name}")
 //    private String name;
-//
-//    @GetMapping("getName")
-//    public Object get(){
-//        return name;
-//    }
+
+    @GetMapping("hello")
+    public Object get(){
+        return FcResult.success("ok", "hello !!!");
+    }
 }

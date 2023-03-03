@@ -21,6 +21,10 @@ spring:
       max-wait: 6000
       filter: slf4j
 
+  redis:
+    host: localhost
+    port: 6379
+
   rabbitmq:
     addresses: 121.43.181.100
     port: 5672
@@ -44,8 +48,8 @@ logging:
 upload:
   uploadPath: D:\dev\files
 
-
-
+# 不校验权限的请求路径
+ignoreUrls: /auth/logout, bbb
 
 
 
