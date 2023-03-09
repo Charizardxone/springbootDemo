@@ -10,7 +10,6 @@ import com.fc.define.Constant;
 import com.fc.intercept.AuthenticationTokenIntercept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
@@ -82,7 +81,7 @@ public class SecurityConfigurer {
         // 设置退出URL
         http.logout()
                 .logoutUrl(Constant.TOKEN_LOGOUT_URL)
-                .logoutSuccessUrl("/sys/logout")
+                .logoutSuccessUrl("/mapper/sys/logout")
                 .addLogoutHandler(logoutHandler());
         // 如果不用验证码，注释这个过滤器即可
 //        http.addFilterBefore(new ValidateCodeFilter(redisTemplate, authenticationFailureHandler()), UsernamePasswordAuthenticationFilter.class);

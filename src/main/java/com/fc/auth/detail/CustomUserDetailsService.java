@@ -3,7 +3,8 @@ package com.fc.auth.detail;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fc.domain.SysUserEntity;
-import com.fc.service.impl.UserServiceImpl;
+import com.fc.modules.base.sys.entity.SysUser;
+import com.fc.modules.base.sys.service.SysUserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Resource
-    private UserServiceImpl sysUserService;
+    private SysUserService sysUserService;
 
 //    @Autowired
 //    private PermissionsService permissionsService;
@@ -31,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUserEntity sysUser = sysUserService.getByUsername(username).getData();
+        SysUser sysUser = sysUserService.loadUserByUsername(username);
         if (ObjectUtil.isNull(sysUser)) {
             throw new UsernameNotFoundException("用户不存在");
         }
@@ -39,14 +40,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        SysUserEntity sysUser = sysUserService.getById(userId);
+        SysUser sysUser = sysUserService.getById(userId);
         if (ObjectUtil.isNull(sysUser)) {
             throw new UsernameNotFoundException("用户不存在");
         }
         return getDetail(sysUser);
     }
 
-    private UserDetails getDetail(SysUserEntity sysUser) {
+    private UserDetails getDetail(SysUser sysUser) {
 //        Set<String> permissions = permissionsService.getUserPermissions(sysUser.getUserId());
         Set<String> permissions = new HashSet<>();
         String[] roles = new String[0];
@@ -54,7 +55,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             roles = permissions.stream().map(role -> "ROLE_" + role).toArray(String[]::new);
         }
         Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(roles);
-        CustomUserDetailsUser customUserDetailsUser = new CustomUserDetailsUser(sysUser.getId(), sysUser.getUsername(), sysUser.getPassword(), authorities);
+        CustomUserDetailsUser customUserDetailsUser = new CustomUserDetailsUser(sysUser.getUserId(), sysUser.getUsername(), sysUser.getPassword(), authorities);
         return customUserDetailsUser;
     }
 }

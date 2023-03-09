@@ -1,5 +1,8 @@
 package com.fc.utils;
 
+import cn.hutool.core.map.MapUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fc.common.PageBounds;
 
 import java.util.Map;
@@ -22,6 +25,19 @@ public class PageUtils {
             return new PageBounds();
         }
         return new PageBounds(page, limit, true);
+    }
+
+    public static  <T> IPage<T> pageParamConvert(Map<String, Object> param){
+        int currPage = 1;
+        int limit = 10;
+        if(MapUtil.getInt(param,"current") != null){
+            currPage = MapUtil.getInt(param,"current");
+        }
+        if(MapUtil.getInt(param,"limit") != null){
+            limit = MapUtil.getInt(param,"limit");
+        }
+        IPage<T> page = new Page<>(currPage,limit);
+        return page;
     }
 
 

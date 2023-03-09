@@ -2,7 +2,7 @@ package com.fc.listener;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.fc.config.RabbitConfig;
-import com.fc.domain.SysUserEntity;
+import com.fc.modules.base.sys.entity.SysUser;
 import org.springframework.amqp.core.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -21,7 +21,7 @@ public class RabbitMQListener {
     @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
     public void ListenerDemoQueue(Message message){
         System.out.println("获取消息：" + new String(message.getBody()));
-        SysUserEntity user = JSONObject.parseObject(new String(message.getBody()), SysUserEntity.class);
+        SysUser user = JSONObject.parseObject(new String(message.getBody()), SysUser.class);
 //        elasticsearchUserDao.save(user);
     }
 

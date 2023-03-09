@@ -13,7 +13,6 @@ public class FcResult<T> implements Serializable {
     private static final long serialVersionUID = 8094069767564096505L;
 
 
-
     /** 返回状态码 */
     private String code;
 
@@ -50,6 +49,14 @@ public class FcResult<T> implements Serializable {
 
     public static FcResult success(String msg, Object data){
         return new FcResult(CODE_SUCCESS.getCode(), msg, data);
+    }
+
+    public static FcResult success(Object data){
+        return new FcResult(CODE_SUCCESS.getCode(), "", data);
+    }
+
+    public static FcResult success(){
+        return new FcResult(CODE_SUCCESS.getCode(), "", null);
     }
 
     public static FcResult fail(String msg){
