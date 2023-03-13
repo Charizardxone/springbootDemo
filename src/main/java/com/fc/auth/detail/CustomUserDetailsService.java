@@ -2,7 +2,6 @@ package com.fc.auth.detail;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.fc.domain.SysUserEntity;
 import com.fc.modules.base.sys.entity.SysUser;
 import com.fc.modules.base.sys.service.SysUserService;
 import org.springframework.security.core.GrantedAuthority;
