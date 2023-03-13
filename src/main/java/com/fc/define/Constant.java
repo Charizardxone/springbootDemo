@@ -9,9 +9,9 @@ package com.fc.define;
  */
 public class Constant {
 
-    public static final String NUMBER_CODE_KEY = "demo:number:code:";
-    public static final String MOBILE_CODE_KEY = "demo:mobile:code:";
-    public static final String AUTHENTICATION_TOKEN = "demo:token:";
+    public static final String NUMBER_CODE_KEY = "cfy:number:code:";
+    public static final String MOBILE_CODE_KEY = "cfy:mobile:code:";
+    public static final String AUTHENTICATION_TOKEN = "cfy:token:";
 
     public static final String TOKEN = "token";
     public static final String TOKEN_ENTRY_POINT_URL = "/auth/login";

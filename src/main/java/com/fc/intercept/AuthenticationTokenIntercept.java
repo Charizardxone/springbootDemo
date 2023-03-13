@@ -7,6 +7,7 @@ import com.fc.auth.AuthIgnoreConfig;
 import com.fc.auth.detail.CustomUserDetailsService;
 import com.fc.common.FcResult;
 import com.fc.define.Constant;
+import com.fc.define.ResultCodeEnum;
 import com.fc.utils.SpringContextUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class AuthenticationTokenIntercept extends BasicAuthenticationFilter {
     public void writer(HttpServletResponse response, String msg) {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(objectMapper.writeValueAsString(FcResult.error(HttpServletResponse.SC_UNAUTHORIZED + msg)));
+
+        response.getWriter().write(objectMapper.writeValueAsString(new FcResult<String>(ResultCodeEnum.NOT_LOGIN.getCode(), null, msg)));
     }
 }
