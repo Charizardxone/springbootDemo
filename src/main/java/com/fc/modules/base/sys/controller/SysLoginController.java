@@ -35,9 +35,9 @@ public class SysLoginController {
     private  RedisTemplate redisTemplate;
 
 //    @AuthIgnore
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public FcResult hello() {
-        return FcResult.success("hello welcome", null);
+    @PostMapping(value = "/")
+    public FcResult hello(String account) {
+        return FcResult.success("hello welcome" + account, null);
     }
 
     /**

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -20,23 +21,32 @@ import java.util.stream.Collectors;
  */
 public class Test {
 
+    private static AtomicInteger count = new AtomicInteger(0);
 
-    public static void main(String[] args) throws Exception {
-//        String[] strs = new String[]{"flower", "flower", "flower", "flower"};
-//        System.out.println(longestCommonPrefix(strs));
-
-//        int[] nums = new int[]{1, 2, 2};
-////        01234 01123
-//        System.out.println(removeDuplicates(nums));
-//        for (int num : nums) {
-//            System.out.print(num);
-//
-//        }
-//        System.out.println("");
-
-        ssss();
+    private static Integer count1 = 0;
+    private static String genReqNo1(){
+        if(count.get() == 9999) {
+            count.set(0);
+        }
+        return  String.format("%04d", count.incrementAndGet());
     }
 
+    private static String genReqNo2(){
+        if(count1 == 9999) {
+            count1 = 0;
+        }
+        return  String.format("%04d", count1++);
+    }
+    public static void main(String[] args) throws Exception {
+//        for (int i = 0; i < 20; i++) {
+//            new Thread(()->{
+////                System.out.println(genReqNo1());
+//                System.out.println(genReqNo2());
+//            }).start();
+//        }
+
+        System.out.println(String.format("%05d", 123));
+    }
 
     public static String longestCommonPrefix(String[] strs) {
 

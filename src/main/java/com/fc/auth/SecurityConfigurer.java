@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,7 +42,7 @@ import java.util.List;
  **/
 @Slf4j
 @EnableWebSecurity
-public class SecurityConfigurer {
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -49,8 +50,9 @@ public class SecurityConfigurer {
     @Autowired
     private AuthIgnoreConfig authIgnoreConfig;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         List<String> permitAll = authIgnoreConfig.getIgnoreUrls();
         permitAll.add("/error");
         permitAll.add("/v3/**");
@@ -83,6 +85,7 @@ public class SecurityConfigurer {
                 .logoutUrl(Constant.TOKEN_LOGOUT_URL)
                 .logoutSuccessUrl("/mapper/sys/logout")
                 .addLogoutHandler(logoutHandler());
+
         // 如果不用验证码，注释这个过滤器即可
 //        http.addFilterBefore(new ValidateCodeFilter(redisTemplate, authenticationFailureHandler()), UsernamePasswordAuthenticationFilter.class);
         // token 验证过滤器
@@ -91,7 +94,7 @@ public class SecurityConfigurer {
         http.exceptionHandling().authenticationEntryPoint(new TokenAuthenticationFailHandler());
         // 用户管理service
         http.userDetailsService(userDetailsService());
-        return http.build();
+//        return http.build();
     }
 
     // 解决跨域
